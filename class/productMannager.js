@@ -8,9 +8,27 @@ class ProductMannager {
         this.path = path 
     }
 
-    addProduct (title, description, code, price, thumbnail, stock, status=true, category) {
-        // const {} = product
+    addToproducts = async () => {
+        const data = await fs.promises.readFile(this.path, 'utf-8')
+        const prod = JSON.parse(data)
+        this.products.push(prod)
+        await addToproducts()
+    }
+
+    async addProduct (product) {
         
+        const {
+            title,
+            description,
+            price,
+            thumbnail,
+            code,
+            stock,
+            status = true,
+            category
+        } = product
+
+
         const productInfo = {
             title,
             description,
@@ -19,39 +37,40 @@ class ProductMannager {
             code,
             stock,
             status,
-            category,
-            id: ProductMannager.id
+            category
         }
 
-        const addToproducts = async () => {
-            const data =fs.readFileSync(this.path, 'utf-8')
-            const prod = JSON.parse(data)
-            this.products.push(prod)
-            await addToproducts()
-        }
+        await this.addToproducts();
+
+        ProductMannager.id = this.products.length + 1;
+
+        productInfo.id = ProductMannager.id;
 
         this.products.push(productInfo)
-        ProductMannager.id ++
-
         fs.writeFileSync(this.path, JSON.stringify(this.products))
     }
 
-    getProducts =  () => {
-        const data = fs.readFileSync(this.path, 'utf-8')
+    getProducts = async () => {
+        const data = await fs.promises.readFile(this.path, 'utf-8')
         const prod = JSON.parse(data)
         return prod
     }
 
-    getProductsById(id) {
-        let data = fs.readFileSync(this.path,'utf-8')
+    async getProductsById(id) {
+        let data = await fs.promises.readFile(this.path,'utf-8')
 
         data = JSON.parse(data)
 
         const busqueda = data.find(e => e.id == id)
-        if(busqueda != undefined){
-            console.log('Producto encontrado', busqueda)
-            return busqueda 
-        } else {return console.log("Product not found")}
+
+        try {
+            if(busqueda != undefined){
+                console.log('Producto encontrado', busqueda)
+                return busqueda 
+            } 
+        } catch (err) {
+            return `Product not found`
+        }
     }
 
     updateProduct = async (id, prodUpdate) => {
@@ -61,10 +80,15 @@ class ProductMannager {
         data = await JSON.parse(data)
         let index = await data.findIndex((e) => e.id === id)
 
-        if(index !== -1){ data[index] = Object.assign({}, data[index], prodUpdate, { id })
-            fs.writeFileSync(this.path, JSON.stringify(data))
-            console.log('Producto modificado con exito')
-        } else console.log('error')
+
+        try {
+            if(index !== -1){ data[index] = Object.assign({}, data[index], prodUpdate, { id })
+                fs.writeFileSync(this.path, JSON.stringify(data))
+                console.log('Producto modificado con exito')
+            } 
+        } catch (err) {
+            await console.log("El producto no se pudo modificar")
+        }
     }
 
     deleteProduct = async (id) => {
@@ -86,13 +110,64 @@ class ProductMannager {
                     console.log("Se a eliminido el producto")
                     })
                 }
-        } catch(error) {
+        } catch(err) {
                 await console.log("El producto no existe")
             }
     }
 
+    async getDataCarrito() {
+        const data = fs.readFileSync(this.path, 'utf-8')
+        const carrito = JSON.parse(data)
+        return carrito
+    }
 
+    async getCartById() {
+        let cartData = await fs.promises.readFile(this.path,'utf-8')
 
+        cartData = JSON.parse(cartData)
+
+        const busqueda = cartData.find(e => e.id == id)
+        try{
+            if(busqueda != undefined){
+                console.log('carrito encontrado', busqueda)
+                return busqueda 
+            }
+        } catch (err) {
+            console.log("cart not found")
+        }
+    }
+
+    async addCart(cart) {
+        const data = await this.getData();
+        let newId = data.length == 0 ? 1 : data[data.length - 1].id + 1;
+        const newCart = { ...cart, id: newId};
+        data.push(newCart)
+
+        try{
+            await fs.promises.writeFile(this.path, JSON.stringify(data))
+            return newId
+        } catch (err) {
+            return `No se pudo agregar al carrito ${cart}`
+        }
+    }
+
+    async updateCart(cart) {
+        const data = await this.getData()
+        const index = data.findIndex((c) => c.id === cart.id)
+
+        if(index === -1) {
+            return `No se pudo actualizar el cart`
+        }
+
+        data.splice(index, 1, cart)
+
+        try{
+            await fs.promises.writeFile(this.path, JSON.stringify(data))
+            return `el cart fue actualizado`
+        } catch (err) {
+            return `no se actualizo el cart`
+        }
+    } 
 }
 
 const products = new ProductMannager('./files/products.json')  

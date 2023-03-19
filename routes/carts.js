@@ -5,19 +5,33 @@ const router = Router()
 
 router.post('/', async (req, res) => {
     const { newCart } = req.body
-    await carts.addProduct(newCart)
+    await carts.addCart(newCart)
     res.json({ message: 'Cart created' })
 })
 
 router.get('/:cid', async (req, res) => {
     const cid = req.params.cid
-    const cartId = await carts.getProductsById(cid)
+    const cartId = await carts.getCartById(cid)
     res.send({ cartId })
 })
 
 router.post('/:cid/product/:pid', async (req, res) => {
     const cid = req.params.cid
     const pid = req.params.pid
+
+    const cart = await carts.getCartById(cid)
+    const productIndex = cart.products.findIndex((p) => p.products === pid)
+
+    if (productIndex !== -1) {
+        cart.products[productIndex].quantity += 1
+        await carts.updateCart(cart)
+        res.json(cart)
+    } else {
+        const newProduct = {product: pid, quantity: 1 }
+        cart.products.push(newProduct)
+        await carts.updateCart(cart)
+        res.json(cart)
+    }
 })
 
 

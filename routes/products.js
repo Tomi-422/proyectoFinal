@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    const { newProduct } = req.body
+    const newProduct = req.body
     await products.addProduct(newProduct)
     res.json({ message: 'Product created' })
 })
@@ -31,7 +31,7 @@ router.get('/:pid', async (req, res) => {
 
 router.put('/:pid', async (req, res) => {
     const pid = req.params.pid
-    const { prodUpdate } = req.body
+    const prodUpdate  = req.body
     await products.updateProduct(pid, prodUpdate)
     res.json({ message: 'Product updated' })
 })
