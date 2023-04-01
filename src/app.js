@@ -2,6 +2,7 @@ const express = require('express')
 const router = require('./router/router')
 const handlebars = require('express-handlebars')
 const { Server } = require('socket.io')
+const { products } = require('./class/productMannager')
  
 const port = 8080
 const app = express()
@@ -23,6 +24,7 @@ const httpServer = app.listen(port, () => {
 
 const io = new Server(httpServer)
 
-io.on('connection', socket => {
-    io.emit('mensajeServidor', 'Hola desde el servidor')
+io.on('connection', async (socket) => {
+    const productsCatched = await products.getProducts(); 
+    io.emit("realtimeproducts", { productsCatched })
 })
