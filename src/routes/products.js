@@ -14,6 +14,9 @@ router.get('/', async (req, res) => {
         console.log(error)
     }
 
+
+    //////////////////////////////////////
+
     const { limit = 10, page = 1,  query, sort } = req.query
 
     const queries = {
@@ -28,6 +31,9 @@ router.get('/', async (req, res) => {
     return res.send({ prod })
 
     //logica del page, query y sort 
+
+    /////////////////////////////////////
+
 })
 
 router.get('/:pid', async (req, res) => {
