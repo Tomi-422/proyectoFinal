@@ -7,7 +7,7 @@ const router = Router()
 
 router.get('/', async (req, res) => {
     try {
-        const cart = await CartDb.find().populate('products.product')
+        const cart = await CartDb.find()
         res.json({ status: 'success', message: cart})
     } catch (error) {
         res.status(400).json({ status: 'error', error })
