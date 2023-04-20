@@ -37,12 +37,12 @@ const router = Router()
 
 router.delete('/', async (req,res) => {
     try {
-        CartDb.deleteMany()
+        await CartDb.deleteMany()
         res.json({ message: 'productos eliminados' })       
     } catch (error) {
         console.log(error)
     }
-    
+     
 })
 
 

@@ -15,24 +15,24 @@ router.get('/', async (req, res) => {
     }
 
 
-    //////////////////////////////////////
+    // //////////////////////////////////////
 
-    const { limit = 10, page = 1,  query, sort } = req.query
+    // const { limit = 10, page = 1,  query, sort } = req.query
 
-    const queries = {
-        limit,
-        page,
-        query,
-        sort
-    }
+    // const queries = {
+    //     limit,
+    //     page,
+    //     query,
+    //     sort
+    // }
 
-    if (limit != 0) return res.send(prod.slice(0, queries.limit))
+    // if (limit != 0) return res.send(prod.slice(0, queries.limit))
 
-    return res.send({ prod })
+    // return res.send({ prod })
 
-    //logica del page, query y sort 
+    // //logica del page, query y sort 
 
-    /////////////////////////////////////
+    // /////////////////////////////////////
 
 })
 
