@@ -9,14 +9,16 @@ const collectionSchema = new mongoose.Schema({
             {
                 product: {
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: 'product'
-                }
-            }
+                    ref: 'products'
+                },
+                quantity: Number,
+            }       
         ],
         default: []
     }
 })
 
+collectionSchema.plugin(mongoosePaginate)
 collectionSchema.pre('find', function(){
     this.populate('products.product')
 })
